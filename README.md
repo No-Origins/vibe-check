@@ -1,90 +1,131 @@
-# Agent Skills — vibe-check
+<div align="center">
 
-Agent skills that let a **non-developer who vibe-codes** maintain, deploy, and manage
-Next.js projects on Vercel — safely. Built on the [Agent Skills](https://agentskills.io/)
-standard (the `SKILL.md` format read by Claude Code, Cursor, and others).
+# 🌀 vibe-check
 
-See [`docs/`](docs/) for the design rationale, the mandatory requirements, and the workflow
-options behind these skills.
+### Ship Next.js apps to Vercel — without being a developer.
 
-## Skills
+A library of AI agent skills that **set up, build, deploy, and rescue** your project for you.
+You talk in plain language; the right skill quietly does the safe thing.
 
-The maintained roster is [`skills/vibe-check/references/skills-catalog.md`](skills/vibe-check/references/skills-catalog.md)
-— vibe-check reads it and lists every skill at the end of onboarding. **When you add a
-skill, append one line to that catalog.**
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Next.js](https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-black?logo=vercel&logoColor=white)
+![Agent Skills](https://img.shields.io/badge/Agent%20Skills-standard-7c3aed)
 
-### vibe-check
-Audits a Next.js repo against the mandatory requirements, fixes what's missing (with your
-permission), and remembers the setup per repository. It keeps a **memory doc**
-(`.vibe-check/memory.md`) and **report docs** (`.vibe-check/reports/`) inside each repo it
-runs in.
+</div>
 
-→ [`skills/vibe-check/SKILL.md`](skills/vibe-check/SKILL.md)
+---
 
-**First run, in plain terms:** it asks to scout your repo → checks every mandatory
-requirement → shows you a short todo list of what's missing → asks before fixing → fixes
-everything → records "All the mandatory requirements satisfied" in memory, then lists the
-skills you can use next.
+## 🤔 What is this?
 
-### new-vibe
-Starts a new piece of work — a feature, fix, or any request — safely on its own git branch,
-so `main` stays deployable. It understands the request, checks whether a new branch is
-needed, tells you the branch it's creating, and checks out off the latest `main`.
+You vibe-code — you describe what you want and the AI writes it. But the *scary* parts aren't
+the code: it's git, deployments, environment variables, and the moment production breaks.
 
-→ [`skills/new-vibe/SKILL.md`](skills/new-vibe/SKILL.md)
+**vibe-check handles those parts for you.** Say something in plain English and the matching
+skill takes over, with guardrails so you can't accidentally break things:
 
-### deep-scout
-Goes deeper than vibe-check's mandatory router check: it maps the whole project's
-organization, writes a report with a todo list (each change explained), and — once you
-approve — reorganizes using **parallel sub-agents** (one per independent batch) before a
-separate **review sub-agent** verifies the build still passes and only file locations
-changed. Advisory only; it doesn't gate deployment.
+> 🗣️ *"Is my project ready?"* → it checks everything and fixes what's missing
+> 🗣️ *"Start a new feature"* → it sets up a safe place to work
+> 🗣️ *"Ship it"* → it tests, previews, and deploys — only going live when you say so
+> 🗣️ *"Production is broken!"* → it instantly rolls back to the last working version
 
-→ [`skills/deep-scout/SKILL.md`](skills/deep-scout/SKILL.md)
+Built on the open [Agent Skills](https://agentskills.io/) standard, so it works in Claude
+Code, Cursor, and other agents that read `SKILL.md` skills.
 
-### safe-deploy
-Ships the current branch the safe way: runs the quality gate (lint/typecheck/test/build via
-**parallel sub-agents**), commits, pushes, opens a PR that triggers a Vercel **preview**, has
-a **review sub-agent** check the diff, then merges to production **only when you explicitly
-approve** — followed by a post-deploy health check. Preview-first; never touches production
-unasked.
+---
 
-→ [`skills/safe-deploy/SKILL.md`](skills/safe-deploy/SKILL.md)
+## 🧰 The skills
 
-### rollback
-The safety net for when a production deploy goes wrong: instantly reverts Vercel to the last
-working deployment (re-pointing the production domain, no rebuild), then walks you through
-reconciling the code — revert the bad change, ship the fix via safe-deploy, and re-enable
-auto-deploys — so the bug can't quietly come back.
+| | Skill | Just say… | What it does |
+|---|---|---|---|
+| 🩺 | **vibe-check** | *"check my repo"* | Audits your repo against every requirement to deploy safely (git, Vercel, tooling, env vars), then fixes what's missing — only after showing you a plain-English to-do list and asking. |
+| 🌱 | **new-vibe** | *"start a new feature"* | Begins new work on its own branch so your live site stays safe. You never touch git. |
+| 🔭 | **deep-scout** | *"tidy my project"* | Looks at how your project is organized and, with your OK, reorganizes it into a clean layout — moving files and fixing imports so nothing breaks. |
+| 🚀 | **safe-deploy** | *"ship it"* | Runs all the checks, opens a preview you can look at, and pushes to production **only when you approve**. |
+| ⏪ | **rollback** | *"production is broken"* | Instantly reverts your live site to the last working version, then helps fix the code so the problem can't return. |
 
-→ [`skills/rollback/SKILL.md`](skills/rollback/SKILL.md)
+---
 
-## Install (Claude Code)
+## 🔄 How it flows
+
+```
+   vibe-check  ──►  new-vibe  ──►  ( you build · deep-scout )  ──►  safe-deploy  ──►  rollback
+   ───────────      ────────       ──────────────────────────      ───────────      ────────
+   set the repo     start work      write code · tidy structure      ship safely     undo a bad
+   up to standard   on a branch                                      (preview→prod)   deploy, fast
+```
+
+Each step is safe on its own, and they hand off to each other — so the whole journey from
+*"empty repo"* to *"live on Vercel"* (and back, if needed) is covered.
+
+---
+
+## 🚀 Quick start
+
+**1. Install the skills** (for Claude Code):
 
 ```bash
-cp -r skills/vibe-check ~/.claude/skills/
+git clone https://github.com/No-Origins/vibe-check.git
+cp -r vibe-check/skills/* ~/.claude/skills/
 ```
 
-Then, from any project, say **"run vibe-check"**.
-
-## Layout
+**2. Open your Next.js project and just say:**
 
 ```
-Agents-Skills/
-  docs/                       # design docs (requirements, CI decision, workflows)
-  skills/
-    vibe-check/
-      SKILL.md                # audit & fix a repo against the mandatory requirements
-      references/             # checklist, skills catalog, memory/report templates
-      scripts/scout.mjs       # static repo scanner → JSON
-    new-vibe/
-      SKILL.md                # start new work on its own branch
-    deep-scout/
-      SKILL.md                # deep project-structure analysis + reorg
-      scripts/map-structure.mjs
-    safe-deploy/
-      SKILL.md                # gate → PR/preview → review → prod (on approval)
-    rollback/
-      SKILL.md                # instant Vercel rollback + code reconcile
-  README.md
+run vibe-check
 ```
+
+It will ask before scouting, show you what's missing, ask before fixing, and finish by
+telling you which skills you can use next. That's it.
+
+---
+
+## 🛡️ What keeps you safe
+
+Every skill follows the same house rules:
+
+- **Two approval gates.** Nothing important happens without showing you a plain-English
+  summary and asking first.
+- **Preview first.** You always see a live preview before anything reaches production.
+- **Never works on `main`.** All work happens on its own branch and merges through a review.
+- **Secrets stay out of your code.** They live in Vercel, never in the repo.
+- **Plain language.** No jargon, no walls of terminal output — just what happened and what's next.
+
+---
+
+## 🧩 Under the hood
+
+- **Format:** the open [Agent Skills](https://agentskills.io/) standard — each skill is a
+  `SKILL.md` with optional helper scripts and references.
+- **Smart checks:** `vibe-check` and `deep-scout` run small Node scripts that scan your repo
+  and return facts; the agent decides what to do with them.
+- **The deploy gate uses Vercel, not paid CI:** your code is tested locally and on Vercel's
+  free build — no GitHub Actions setup required. (See [`docs/`](docs/) for why.)
+
+```
+vibe-check/
+├── docs/                     # design rationale, requirements, workflow decisions
+├── skills/
+│   ├── vibe-check/           # the setup & audit gate (scout.mjs, checklist, templates)
+│   ├── new-vibe/             # start work on a branch
+│   ├── deep-scout/           # structure analysis + reorg (map-structure.mjs)
+│   ├── safe-deploy/          # test → preview → review → production (on approval)
+│   └── rollback/             # instant Vercel rollback + code reconcile
+├── LICENSE
+└── README.md
+```
+
+---
+
+## ➕ Adding a skill
+
+The roster lives in
+[`skills/vibe-check/references/skills-catalog.md`](skills/vibe-check/references/skills-catalog.md).
+Add a new skill folder, then append **one line** to that catalog — `vibe-check` reads it and
+automatically tells users about the new skill.
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) © No-Origins
