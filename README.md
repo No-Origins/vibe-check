@@ -69,6 +69,13 @@ git clone https://github.com/No-Origins/vibe-check.git
 cp -r vibe-check/skills/* ~/.claude/skills/
 ```
 
+**…or just share this link with your AI agent** (Claude, Antigravity, Copilot, etc.) and ask
+it to set the skills up for you:
+
+```
+https://github.com/No-Origins/vibe-check
+```
+
 **2. Open your Next.js project and just say:**
 
 ```
