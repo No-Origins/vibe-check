@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Env / secrets (none should live here, but just in case)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
